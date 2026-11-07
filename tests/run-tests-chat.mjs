@@ -56,6 +56,19 @@ check('buildRequestBody يضع تعليمة النظام والتهيئة', () =
   eq(b.generationConfig.maxOutputTokens, 256, 'حد الرموز');
 });
 
+check('buildRequestBody لا يرسل temperature افتراضياً', () => {
+  const b = buildRequestBody([{ role: 'user', text: 'فكرة' }]);
+  eq(b.generationConfig.temperature, undefined, 'لا نرسل معاملات أخذ العينات افتراضياً');
+  eq(b.generationConfig.maxOutputTokens, 1024, 'حد الرموز الافتراضي');
+  ok(!('temperature' in b.generationConfig), 'الحقل غير موجود أصلاً');
+});
+
+check('DEFAULT_MODEL ليس الموديل الموقف gemini-2.5-flash', () => {
+  ok(DEFAULT_MODEL !== 'gemini-2.5-flash', 'الموديل الموقوف لا يكون الافتراضي');
+  ok(DEFAULT_MODEL.includes('flash'), 'نموذج Flash مناسب للمحادثة');
+  ok(endpointFor(DEFAULT_MODEL).includes(DEFAULT_MODEL), 'العنوان يستخدم الافتراضي');
+});
+
 check('SYSTEM_PROMPT يذكر صيغة الملخص ويمنع التخمين', () => {
   ok(SYSTEM_PROMPT.includes('"ready":true'), 'يجب أن توضح صيغة الملخص');
   ok(SYSTEM_PROMPT.includes('لا تفترض'), 'يجب أن تمنع الافتراض');
