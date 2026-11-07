@@ -1,0 +1,123 @@
+# Migo AI Video Agent Professional
+
+استوديو عربي (RTL) لتخطيط إنتاج الفيديو: يحوّل الفكرة إلى خطة مشاهد وبرومبتات دقيقة،
+ويتعلّم من مشاريعك وتقييماتك ومراجعك عبر قاعدة معرفة بموافقة يدوية فقط.
+مجاني، مستضاف على GitHub Pages، والبيانات على Supabase Free أو محلياً في المتصفح.
+المشروع مستقل تماماً عن متجر Migo AI Solution.
+
+> ⚠️ **الحالة: قيد البناء.** هذا التقرير يوضّح ما يعمل فعلاً وما لم يُنفَّذ بعد (انظر آخر قسم). لا تدّعِ أن أي بند غير مُختبر أنه يعمل.
+
+---
+
+## البنية
+
+```
+MigoAIVideoAgentProfessional/
+  index.html
+  styles.css
+  app.js
+  config.example.js        ← انسخه إلى config.js وضع مفاتيحك
+  js/
+    director-engine.js     ← ✅ مُنفَّذ ومُختبر
+    prompt-builder.js      ← ✅ مُنفَّذ ومُختبر
+    store.js               ← ✅ طبقة تخزين (ذاكرة/محلي/سحابي) مُختبرة
+    project-manager.js     ← ✅ مُنفَّذ ومُختبر
+    asset-manager.js       ← ✅ مُنفَّذ ومُختبر
+    backup-manager.js      ← ✅ مُنفَّذ ومُختبر
+    supabase-client.js     ← ✅ مكتوب (لم يُختبر على Supabase حقيقي)
+    auth.js                ← ✅ مكتوب (لم يُختبر على Supabase حقيقي)
+    learning-engine.js     ← ✅ مُنفَّذ ومُختبر
+    approval-center.js     ← ✅ مُنفَّذ ومُختبر
+    knowledge-base.js      ← ✅ مُنفَّذ ومُختبر
+    research-engine.js     ← ✅ مُنفَّذ ومُختبر
+    video-analyzer.js      ← ✅ مُنفَّذ ومُختبر
+    montage-engine.js      ← ✅ مُنفَّذ ومُختبر
+  database/
+    schema.sql             ← 11 جدولاً + فهارس + مشغّلات
+    policies.sql           ← RLS لكل جدول + Storage خاص
+  tests/
+    run-tests.mjs          ← ✅ اختبارات آلية (node tests/run-tests.mjs)
+    security-checklist.md
+  legacy-v1/NOTES.md       ← جرد النسخة السابقة وما سيؤول إليه
+```
+
+---
+
+## إعداد Supabase (خطوة بخطوة)
+
+1. أنشئ مشروعاً في [supabase.com](https://supabase.com) (الخطة المجانية).
+2. من **SQL Editor** نفّذ محتوى `database/schema.sql` كاملاً.
+3. ثم نفّذ `database/policies.sql` (يفعّل RLS ويجهّز Storage).
+4. من **Authentication > Users** أنشئ حساب المالك يدوياً (بريد + كلمة مرور).
+5. من **Authentication > Sign In / Providers** عطّل **Allow new users to sign up** (لا تسجيل عام).
+6. من **Project Settings > API** انسخ **Project URL** و **anon/public key** فقط.
+7. انسخ `config.example.js` إلى `config.js` وضع القيمتين، واجعل `DEMO_MODE = false`.
+
+**ممنوع تماماً** وضع `service_role` أو أي مفتاح سري في `config.js` أو أي ملف يُرفع.
+الحماية الحقيقية هي سياسات RLS، لا إخفاء المفتاح.
+
+---
+
+## النشر على GitHub Pages من Android
+
+1. أنشئ مستودعاً مستقلاً باسم `MigoAIVideoAgentProfessional`.
+2. ارفع محتوى المجلد إلى الجذر (لاحظ أن `config.js` مستثنى عبر `.gitignore`).
+3. من المستودع: **Settings > Pages**.
+4. **Deploy from a branch** ثم `main` و `/(root)` ثم **Save**.
+5. انتظر اكتمال النشر وافتح الرابط.
+
+---
+
+## التشغيل والاختبار محلياً
+
+```bash
+npm test          # يشغّل اختبارات منطق النواة (Node)
+node tests/run-tests.mjs
+```
+
+---
+
+## ما يعمل دون اتصال مقابل ما يحتاج إنترنت
+
+| يعمل دون اتصال (بعد التحميل الأول) | يحتاج إنترنت |
+|---|---|
+| توليد خطة المشاهد والبرومبتات (منطق نقي) | تحميل مكتبة Supabase من CDN |
+| الحفظ في `localStorage` (وضع تجريبي) | مصادقة Supabase وحفظه السحابي |
+| تصدير/استيراد JSON | تحميل FFmpeg.wasm للدمج |
+| قراءة الأصول والملاحظات المحلية | أي بحث/مراجع تجلب من الويب |
+
+---
+
+## حدود معلومة
+
+- لا يولّد الفيديو من النص. تنشئ المقاطع في أداة خارجية ثم تجمعها.
+- الدمج عبر FFmpeg.wasm ثقيل على هواتف Android وقد يفشل مع الملفات الكبيرة أو الترميزات غير المدعومة.
+- لا يوجد رصد تلقائي للإنترنت في الخلفية على GitHub Pages؛ البحث يدوي أو عبر روابط تضيفها.
+
+---
+
+## الحالة الحالية (ما نُفِّذ فعلاً)
+
+**نُفِّذ واختُبِر آلياً (Node): 65 اختباراً ناجحاً + اختبار دخان للواجهة**
+- `js/director-engine.js` + `js/prompt-builder.js` — محرك إخراج كامل (26 اختباراً).
+- `js/store.js` — طبقة تخزين بثلاث واجهات متطابقة (ذاكرة/محلي/Supabase).
+- `js/project-manager.js`, `js/asset-manager.js`, `js/backup-manager.js` — (9 اختبارات).
+- `js/learning-engine.js`, `js/approval-center.js`, `js/knowledge-base.js` — (16 اختباراً).
+- `js/research-engine.js`, `js/video-analyzer.js`, `js/montage-engine.js` — (14 اختباراً).
+- `tests/smoke-dom.mjs` — يحمّل `app.js` فعلياً مع DOM وهمي ويتأكد أن الإقلاع لا يرمي خطأً.
+- الواجهة: كل الأقسام العشرة تعمل: دخول، استوديو، مشاريع، أصول، تعلم وموافقات، معرفة، بحث ومصادر، محلل فيديو، تجميع، وإعدادات ونسخ.
+
+**السياسات المضمونة بالاختبارات:** الاقتراح يبقى معلّقاً حتى الاعتماد اليدوي؛ المرفوض لا يصبح نشطاً أبداً؛ التراجع عن اعتماد ممكن؛ تحديث قاعدة معتمدة يُنشئ اقتراحاً جديداً بفرق معروض ولا يلمس القديمة؛ الاستيراد لا يرقّي أي اقتراح.
+
+**مكتوب ولم يُختبر على خدمة حقيقية:**
+- `js/supabase-client.js` و `js/auth.js` — يحتاجان مشروع Supabase فعلي.
+- `database/schema.sql` + `database/policies.sql` — رُوجعا يدوياً، **ولم يُنفَّذا على Postgres حقيقي**.
+
+**لم يُنفَّذ بعد:** كل الوحدات البرمجية مكتملة. الباقي *اختبار على خدمات حقيقية*: تشغيل SQL على Postgres، تصدير RLS بحسابين، مصادقة Supabase فعلية، واختبار الواجهة والمونتاج على هاتف Android. انظر `tests/test-report.md`.
+
+## يحتاج إلى مفاتيح أو إعداد منك
+- `SUPABASE_URL` و `SUPABASE_ANON_KEY` في `config.js`.
+- تنفيذ `schema.sql` و `policies.sql` في مشروع Supabase الخاص بك.
+- إنشاء حساب المالك يدوياً وتعطيل التسجيل العام.
+- تشغيل اختبارات RLS والعزل بحسابين (يحتاج Supabase حقيقي).
+- نشر GitHub Pages واختبار الواجهة على جهاز Android حقيقي.
