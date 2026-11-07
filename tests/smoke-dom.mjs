@@ -42,8 +42,15 @@ try {
   await new Promise((r) => setTimeout(r, 60)); // فرصة لمسار boot غير المتزامن
   if (rejected) throw rejected;
   console.log('PASS  app.js استُورد وأقلع في الوضع التجريبي دون أخطاء');
+
+  // وحدة المحادثة تُحمَّل مستقلة: نتحقق أنها تُستورد وتبني واجهتها بلا خطأ.
+  // لا نستدعي أي شبكة هنا، فالمفتاح غير موجود والاختبار بلا مفاتيح.
+  await import('../js/chat-ui.js');
+  await new Promise((r) => setTimeout(r, 30));
+  if (rejected) throw rejected;
+  console.log('PASS  js/chat-ui.js استُورد وبنت واجهتها دون أخطاء');
   process.exit(0);
 } catch (e) {
-  console.log('FAIL  app.js:\n      ' + (e && e.message));
+  console.log('FAIL  ' + (e && e.message));
   process.exit(1);
 }
