@@ -10,10 +10,10 @@
    3) نفّذ database/schema.sql ثم database/policies.sql في Supabase.
 */
 export const CONFIG = {
-  SUPABASE_URL: 'YOUR_SUPABASE_PROJECT_URL',
-  SUPABASE_ANON_KEY: 'YOUR_SUPABASE_ANON_PUBLIC_KEY',
+  SUPABASE_URL: 'https://xydgyyjpqtkmcpzbhzyf.supabase.co',
+  SUPABASE_ANON_KEY: 'sb_publishable_hFEj6jel46eFN9waFscjZw_tnPI8QQc',
 
-  DEMO_MODE: true,
+  DEMO_MODE: false,
 
   MAX_FILE_MB: 120,
   MAX_TOTAL_FILES_MB: 300,
