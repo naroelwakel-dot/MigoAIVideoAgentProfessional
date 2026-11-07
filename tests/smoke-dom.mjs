@@ -49,6 +49,13 @@ try {
   await new Promise((r) => setTimeout(r, 30));
   if (rejected) throw rejected;
   console.log('PASS  js/chat-ui.js استُورد وبنت واجهتها دون أخطاء');
+
+  // معمل اللقطات: نفس الفحص. لا نضغط أي زر ولا ننزّل ملفاً، فقط نتأكد
+  // أن الاستيراد والإقلاع وتوزيع القوالب لا ترمي خطأً بلا بيانات.
+  await import('../js/shotlab-ui.js');
+  await new Promise((r) => setTimeout(r, 30));
+  if (rejected) throw rejected;
+  console.log('PASS  js/shotlab-ui.js استُورد وبنت واجهته دون أخطاء');
   process.exit(0);
 } catch (e) {
   console.log('FAIL  ' + (e && e.message));
