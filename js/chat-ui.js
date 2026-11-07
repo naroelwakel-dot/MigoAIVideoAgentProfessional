@@ -48,9 +48,15 @@ function loadKey() {
   try { return globalThis.localStorage.getItem(KEY_STORAGE) || ''; }
   catch { return ''; }
 }
+/* أسماء موديلات اتوقفت؛ لو جهاز المستخدم حافظ واحد منها نرجع للافتراضي الجديد. */
+const RETIRED_MODELS = ['gemini-2.5-flash', 'gemini-2.5-pro', 'gemini-2.0-flash'];
+
 function loadModel() {
-  try { return globalThis.localStorage.getItem(MODEL_STORAGE) || DEFAULT_MODEL; }
-  catch { return DEFAULT_MODEL; }
+  try {
+    const saved = globalThis.localStorage.getItem(MODEL_STORAGE);
+    if (!saved || RETIRED_MODELS.includes(saved.trim())) return DEFAULT_MODEL;
+    return saved;
+  } catch { return DEFAULT_MODEL; }
 }
 function saveKey(v) {
   try { globalThis.localStorage.setItem(KEY_STORAGE, v); return true; }
@@ -125,6 +131,17 @@ async function callGemini(history, key, model) {
   try { data = await res.json(); } catch { data = null; }
   if (!res.ok) {
     const msg = extractError(data);
+    /* الموديل الموقوف: Google ترجّع 404 أو 400 برسالة "no longer available"
+       وفيها اسم البديل. نضيف سطراً عربياً يوضّح الخطوة بدل ما يتحيّر المستخدم. */
+    if (/no longer available|deprecated|not found|is not supported/i.test(msg) || res.status === 404) {
+      const suggested = (msg.match(/use models\/([A-Za-z0-9._-]+)/i) || [])[1];
+      throw new Error(
+        (suggested
+          ? `النموذج ده مبقاش متاح. اكتب في خانة «النموذج»: ${suggested} وجرّب تاني.`
+          : 'النموذج ده مبقاش متاح. غيّر اسم النموذج في خانة «النموذج» وجرّب تاني.')
+        + (msg ? `\nالرسالة من Google: ${msg}` : '')
+      );
+    }
     if (res.status === 400 || res.status === 403) {
       throw new Error(msg || 'المفتاح غير صالح أو غير مسموح. تأكد أنك نسخت مفتاح Gemini API كاملاً.');
     }
