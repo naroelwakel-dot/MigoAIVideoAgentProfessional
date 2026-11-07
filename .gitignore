@@ -1,0 +1,18 @@
+# ملاحظة: config.js مرفوع عن قصد، لأنه يحوي مفتاح anon/public العام فقط
+# والمشروع يُنشر كموقع ثابت على GitHub Pages. لا تضع فيه أي سر إداري.
+
+# أسرار حقيقية - لا تُرفع أبداً
+.env
+.env.*
+*.service_role.*
+
+# نظام
+.DS_Store
+Thumbs.db
+node_modules/
+
+# مخرجات محلية
+*.mp4
+*.webm
+*.mov
+*.zip
