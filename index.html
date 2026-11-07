@@ -10,6 +10,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script type="module" src="app.js"></script>
   <script type="module" src="js/chat-ui.js"></script>
+  <script type="module" src="js/shotlab-ui.js"></script>
 </head>
 <body>
   <div class="ambient a1"></div><div class="ambient a2"></div>
@@ -54,6 +55,7 @@
         <button class="tab active" data-view="dashboard">لوحة التحكم</button>
         <button class="tab" data-view="chat">غرفة الفكرة</button>
         <button class="tab" data-view="studio">استوديو الإنتاج</button>
+        <button class="tab" data-view="shotlab">معمل اللقطات</button>
         <button class="tab" data-view="projects">المشاريع</button>
         <button class="tab" data-view="assets">مكتبة الأصول</button>
         <button class="tab" data-view="learning">التعلم والموافقات</button>
@@ -191,6 +193,51 @@
             </div>
           </div>
         </div>
+      </div>
+
+      <!-- معمل اللقطات -->
+      <div class="view hidden" id="view-shotlab">
+        <section class="panel">
+          <div class="kicker">SHOT LAB</div>
+          <h2>معمل اللقطات</h2>
+          <p class="muted" style="font-size:12.5px">
+            يقرأ نفس بيانات «استوديو الإنتاج» (الاسم، الفكرة، المدة، الأبعاد، الأسلوب)،
+            ويوزّع على كل مشهد قالب لقطة عربية، ويوحّد الهوية البصرية لكل اللقطات،
+            ثم يصدّر ملفات جاهزة للمونتاج. لا يولّد فيديو ولا يحتاج أي مفتاح.
+          </p>
+          <div class="row" style="margin-top:12px">
+            <button class="btn btn-primary" id="labBuild" type="button">ابنِ الخطة ووزّع القوالب</button>
+            <button class="btn btn-secondary" id="labAuto" type="button">إعادة التوزيع تلقائياً</button>
+            <button class="btn btn-ghost small-btn" id="labGoStudio" type="button">اذهب إلى الاستوديو</button>
+          </div>
+          <div class="message" id="labStatus"></div>
+          <div class="muted" id="labBrief" style="font-size:12px;line-height:1.9;margin-top:6px"></div>
+        </section>
+
+        <section class="panel" style="margin-top:14px">
+          <h2>الهوية البصرية المشتركة</h2>
+          <p class="muted" style="font-size:12px">تلتزم بها كل اللقطات، وتُضاف إلى كل برومبت مشهد حتى لا تتبعثر هوية الفيديو.</p>
+          <div class="lab-theme" id="labTheme"></div>
+          <div class="row" style="margin-top:10px">
+            <button class="btn btn-ghost small-btn" id="labThemeReset" type="button">رجّع ثيم الأسلوب الافتراضي</button>
+          </div>
+          <div class="message" id="labThemeMsg"></div>
+        </section>
+
+        <section class="panel" style="margin-top:14px">
+          <h2>اللقطات</h2>
+          <div id="labScenes"><div class="muted">لم تُبنَ الخطة بعد.</div></div>
+        </section>
+
+        <section class="panel" style="margin-top:14px">
+          <h2>التصدير</h2>
+          <div class="row">
+            <button class="btn btn-primary" id="labExportAll" type="button">نزّل الملفات الجاهزة</button>
+            <button class="btn btn-secondary" id="labCopyPrompts" type="button">انسخ كل البرومبتات</button>
+            <button class="btn btn-ghost small-btn" id="labCopyShotList" type="button">انسخ قائمة اللقطات</button>
+          </div>
+          <div class="muted" id="labExportInfo" style="font-size:12px;line-height:1.9;margin-top:8px"></div>
+        </section>
       </div>
 
       <!-- المشاريع -->
