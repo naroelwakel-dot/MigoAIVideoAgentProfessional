@@ -5,6 +5,6 @@
   "type": "module",
   "description": "Migo AI Video Agent Professional - استوديو تخطيط وإنتاج فيديو عربي (واجهة فقط، GitHub Pages + Supabase Free).",
   "scripts": {
-    "test": "node tests/run-tests.mjs && node tests/run-tests-managers.mjs && node tests/run-tests-learning.mjs && node tests/run-tests-stage4.mjs && node tests/smoke-dom.mjs"
+    "test": "node tests/run-tests.mjs && node tests/run-tests-managers.mjs && node tests/run-tests-learning.mjs && node tests/run-tests-stage4.mjs && node tests/run-tests-chat.mjs && node tests/smoke-dom.mjs"
   }
 }
