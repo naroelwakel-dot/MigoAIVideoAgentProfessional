@@ -10,7 +10,10 @@
    مفتاح Gemini يُحفظ على جهاز المستخدم فقط (localStorage) كما اختار المستخدم.
 */
 
-export const DEFAULT_MODEL = 'gemini-2.5-flash';
+/* gemini-2.5-flash اتوقف ومبقى متاح للحسابات الجديدة، والبديل الرسمي هو
+   gemini-3.8-flash. لو ظهر لك خطأ "no longer available" غيّر الاسم من خانة
+   «النموذج» في التطبيق؛ الرسالة نفسها بتقول اسم البديل. */
+export const DEFAULT_MODEL = 'gemini-3.8-flash';
 
 export function endpointFor(model = DEFAULT_MODEL) {
   const m = String(model || DEFAULT_MODEL).trim() || DEFAULT_MODEL;
@@ -65,13 +68,14 @@ export function buildContents(history = []) {
 
 export function buildRequestBody(history = [], opts = {}) {
   const contents = buildContents(history);
-  const body = {
-    contents,
-    generationConfig: {
-      temperature: typeof opts.temperature === 'number' ? opts.temperature : 0.7,
-      maxOutputTokens: typeof opts.maxOutputTokens === 'number' ? opts.maxOutputTokens : 1024
-    }
+  const gen = {
+    maxOutputTokens: typeof opts.maxOutputTokens === 'number' ? opts.maxOutputTokens : 1024
   };
+  /* الحرارة تُضاف فقط عند طلبها صراحةً: معاملات أخذ العينات
+     (temperature/topP/topK) اتشالت من الموديلات الأحدث، وإرسالها يرجّع
+     400 INVALID_ARGUMENT. الافتراضي عند Google مناسب للمحادثة. */
+  if (typeof opts.temperature === 'number') gen.temperature = opts.temperature;
+  const body = { contents, generationConfig: gen };
   const sys = opts.systemPrompt === undefined ? SYSTEM_PROMPT : opts.systemPrompt;
   if (sys) body.systemInstruction = { parts: [{ text: sys }] };
   return body;
