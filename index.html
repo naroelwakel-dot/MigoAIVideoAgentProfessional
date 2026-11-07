@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#070a11">
+  <meta name="description" content="Migo AI Video Agent Professional - استوديو عربي لتخطيط إنتاج الفيديو">
+  <title>Migo AI Video Agent Professional</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <div class="ambient a1"></div><div class="ambient a2"></div>
+
+  <header class="topbar shell">
+    <a class="brand" href="#"><span class="brand-mark">M</span><span><b>Migo AI</b><small>VIDEO AGENT PRO</small></span></a>
+    <div class="top-actions">
+      <span id="statusDot" class="status-dot demo"></span>
+      <span id="connectionLabel">جارٍ التحميل...</span>
+      <button id="logoutBtn" class="btn btn-ghost small-btn hidden">تسجيل الخروج</button>
+    </div>
+  </header>
+
+  <main class="shell">
+    <!-- ================= شاشة الدخول ================= -->
+    <section id="loginView" class="login-wrap">
+      <div class="hero">
+        <span class="eyebrow">YOUR PRIVATE PRODUCTION STUDIO</span>
+        <h1>من فكرة إلى <span style="color:var(--cyan)">خطة إنتاج كاملة</span>.</h1>
+        <p>يحوّل الوكيل فكرتك إلى مشاهد موقّتة، وبرومبت دقيق لكل مشهد، ويحفظ أصولك
+           (شخصيات ومواقع) لتبقى متسقة بين اللقطات.</p>
+        <div class="feature-row"><span>✦ محرك إخراج</span><span>✦ ثبات الشخصيات</span><span>✦ تعلّم بموافقتك</span></div>
+      </div>
+      <form id="loginForm" class="panel" style="max-width:430px">
+        <div class="kicker">PRIVATE ACCESS</div>
+        <h2>مساحة Migo الخاصة</h2>
+        <p class="muted" id="loginHint">جارٍ فحص الإعداد...</p>
+        <label>البريد الإلكتروني
+          <input id="email" type="email" placeholder="you@example.com" autocomplete="username">
+        </label>
+        <label>كلمة المرور
+          <input id="password" type="password" placeholder="••••••••" autocomplete="current-password">
+        </label>
+        <button class="btn btn-primary full" type="submit">دخول إلى الاستوديو</button>
+        <p id="loginMessage" class="message" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <!-- ================= التطبيق ================= -->
+    <section id="appView" class="hidden">
+      <nav class="tabs" id="tabs">
+        <button class="tab active" data-view="dashboard">لوحة التحكم</button>
+        <button class="tab" data-view="studio">استوديو الإنتاج</button>
+        <button class="tab" data-view="projects">المشاريع</button>
+        <button class="tab" data-view="assets">مكتبة الأصول</button>
+        <button class="tab" data-view="learning">التعلم والموافقات</button>
+        <button class="tab" data-view="knowledge">قاعدة المعرفة</button>
+        <button class="tab" data-view="research">البحث والمصادر</button>
+        <button class="tab" data-view="analyzer">محلل الفيديو</button>
+        <button class="tab" data-view="montage">استوديو التجميع</button>
+        <button class="tab" data-view="settings">الإعدادات والنسخ</button>
+      </nav>
+
+      <!-- لوحة التحكم -->
+      <div class="view" id="view-dashboard">
+        <h2>لوحة التحكم</h2>
+        <p class="muted">نظرة سريعة على مساحتك.</p>
+        <div class="cards" id="stats"></div>
+      </div>
+
+      <!-- الاستوديو -->
+      <div class="view hidden" id="view-studio">
+        <div class="grid2">
+          <form class="panel" id="projectForm">
+            <div class="kicker">01 / NEW PROJECT</div>
+            <h2>مشروع جديد</h2>
+            <label>اسم المشروع<input id="pTitle" maxlength="90" placeholder="مثلاً: أسطورة آخر تنين" required></label>
+            <label>الفكرة أو وصف الفيديو<textarea id="pIdea" rows="4" placeholder="اكتب الفكرة، الشخصيات، الحدث، النهاية..." required></textarea></label>
+            <label>الهدف (اختياري)<input id="pObjective" placeholder="مثلاً: إعلان تشويقي للمتجر"></label>
+            <label>الجمهور (اختياري)<input id="pAudience" placeholder="مثلاً: شباب 18-30 على الهاتف"></label>
+            <div class="grid2">
+              <label>المدة
+                <select id="pDuration">
+                  <option value="15">15 ثانية</option><option value="30">30 ثانية</option>
+                  <option value="45">45 ثانية</option><option value="60" selected>60 ثانية</option>
+                  <option value="90">90 ثانية</option><option value="120">120 ثانية</option>
+                </select>
+              </label>
+              <label>الأبعاد
+                <select id="pAspect">
+                  <option value="9:16">عمودي 9:16</option><option value="16:9">أفقي 16:9</option><option value="1:1">مربع 1:1</option>
+                </select>
+              </label>
+            </div>
+            <label>الأسلوب البصري
+              <select id="pStyle">
+                <option>سينمائي واقعي للغاية</option><option>فانتازيا ملحمية</option>
+                <option>إعلان تجاري فاخر</option><option>أنيميشن ثلاثي الأبعاد</option><option>وثائقي واقعي</option>
+              </select>
+            </label>
+            <label>الأصول المرجعية (اختياري، اضغط للاختيار)
+              <select id="pAssets" multiple size="3"></select>
+            </label>
+            <button class="btn btn-primary full" type="submit">إنشاء خطة المشاهد ✦</button>
+            <p class="message" id="studioMessage" aria-live="polite"></p>
+          </form>
+
+          <div class="panel">
+            <div class="kicker">02 / SCENE BLUEPRINT</div>
+            <h2>مخطط المشاهد</h2>
+            <div id="planSummary" class="muted">أدخل فكرتك واضغط «إنشاء خطة المشاهد».</div>
+            <div id="sceneOutput"></div>
+            <div class="row hidden" id="planActions" style="margin-top:12px">
+              <button class="btn btn-secondary" id="copyAllBtn">نسخ كل البرومبتات</button>
+              <button class="btn btn-ghost" id="copyMasterBtn">نسخ البرومبت الرئيسي</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- المشاريع -->
+      <div class="view hidden" id="view-projects">
+        <div class="row" style="justify-content:space-between">
+          <h2>المشاريع</h2>
+          <button class="btn btn-ghost small-btn" id="refreshProjects">تحديث ↻</button>
+        </div>
+        <div id="projectList"></div>
+      </div>
+
+      <!-- الأصول -->
+      <div class="view hidden" id="view-assets">
+        <div class="grid2">
+          <form class="panel" id="assetForm">
+            <div class="kicker">REFERENCE ASSETS</div>
+            <h2>أصل جديد</h2>
+            <label>الاسم<input id="aName" placeholder="مثلاً: التنين الأزرق" required></label>
+            <label>النوع<select id="aType"></select></label>
+            <label>الوصف التفصيلي<textarea id="aDesc" rows="3" placeholder="اللون، الملامح، الملابس، العلامات المميزة..." required></textarea></label>
+            <label>وسوم (افصل بفاصلة)<input id="aTags" placeholder="تنين, أزرق, فانتازيا"></label>
+            <button class="btn btn-primary full" type="submit">حفظ الأصل</button>
+            <p class="message" id="assetMessage" aria-live="polite"></p>
+          </form>
+          <div class="panel"><h2>الأصول المحفوظة</h2><div id="assetList"></div></div>
+        </div>
+      </div>
+
+      <div class="view hidden" id="view-settings">
+        <h2>الإعدادات والنسخ الاحتياطي</h2>
+        <div class="panel">
+          <div class="row">
+            <button class="btn btn-secondary" id="exportBtn">تصدير نسخة JSON</button>
+            <label class="btn btn-ghost small-btn" for="importFile" style="margin:0;cursor:pointer">استيراد نسخة JSON</label>
+            <input id="importFile" type="file" accept="application/json,.json" class="hidden">
+            <button class="btn btn-danger small-btn" id="dangerWipe">حذف كل البيانات المحلية</button>
+          </div>
+          <p class="message" id="backupMessage" aria-live="polite"></p>
+          <p class="muted" style="font-size:12px">التصدير يشمل المشاريع والمشاهد والأصول. استيراد الاقتراحات لا يتم كقواعد معتمدة أبداً.</p>
+        </div>
+      </div>
+
+      <!-- أقسام المراحل القادمة (موضّحة بصراحة) -->
+      <div class="view hidden" id="view-learning">
+        <div class="grid2">
+          <form class="panel" id="feedbackForm">
+            <div class="kicker">PROJECT FEEDBACK</div>
+            <h2>قيّم مشروعاً</h2>
+            <label>المشروع<select id="fbProject"></select></label>
+            <label>التقييم (1 = ضعيف، 5 = ممتاز)
+              <select id="fbRating"><option>1</option><option>2</option><option>3</option><option>4</option><option selected>5</option></select>
+            </label>
+            <label>ما نجح<textarea id="fbSuccess" rows="2" placeholder="مثلاً: الإضاءة الذهبية أعطت جواً قوياً"></textarea></label>
+            <label>ما فشل<textarea id="fbFailure" rows="2" placeholder="مثلاً: ملامح الوجه تغيّرت بين اللقطات"></textarea></label>
+            <button class="btn btn-primary full" type="submit">حفظ التقييم واقترح تحسينات</button>
+            <p class="message" id="fbMessage" aria-live="polite"></p>
+          </form>
+          <div class="panel">
+            <div class="kicker">APPROVAL CENTER</div>
+            <h2>الاقتراحات</h2>
+            <p class="muted" style="font-size:12px">لا يصبح أي اقتراح قاعدة نشطة إلا بضغط «اعتماد».</p>
+            <div id="proposalList"></div>
+            <h3 style="margin-top:18px">سجل القرارات</h3>
+            <div id="decisionList"></div>
+          </div>
+        </div>
+      </div>
+      <div class="view hidden" id="view-knowledge">
+        <div class="grid2">
+          <form class="panel" id="knowledgeForm">
+            <div class="kicker">KNOWLEDGE BASE</div>
+            <h2>معلومة جديدة</h2>
+            <label>العنوان<input id="kTitle" placeholder="مثلاً: إضاءة الغروب الذهبية" required></label>
+            <label>المتن<textarea id="kBody" rows="4" placeholder="الملاحظة أو المعلومة بالتفصيل..." required></textarea></label>
+            <div class="grid2">
+              <label>التصنيف<input id="kCategory" placeholder="تصوير / إضاءة / مونتاج"></label>
+              <label>النوع<select id="kType"></select></label>
+            </div>
+            <label>وسوم (افصل بفاصلة)<input id="kTags" placeholder="إضاءة, غروب"></label>
+            <button class="btn btn-primary full" type="submit">إضافة (تبقى معلّقة)</button>
+            <p class="message" id="kMessage" aria-live="polite"></p>
+          </form>
+          <div class="panel">
+            <h2>المعرفة المعتمدة</h2>
+            <label>بحث<input id="kSearch" placeholder="ابحث بالكلمة أو الوسم..."></label>
+            <div id="knowledgeList"></div>
+          </div>
+        </div>
+      </div>
+      <div class="view hidden" id="view-research">
+        <div class="grid2">
+          <form class="panel" id="sourceForm">
+            <div class="kicker">RESEARCH &amp; SOURCES</div>
+            <h2>مصدر جديد (يدوي)</h2>
+            <p class="muted" style="font-size:12px">لا يوجد رصد تلقائي للإنترنت. تسجّل المراجع بنفسك، ولا ننسب معلومة لمصدر لم تُراجعه.</p>
+            <label>العنوان<input id="sTitle" placeholder="مثلاً: دليل إضاءة الغروب" required></label>
+            <label>الرابط (اختياري)<input id="sUrl" placeholder="https://..."></label>
+            <div class="grid2">
+              <label>النوع<select id="sType"></select></label>
+              <label>الاعتمادية<select id="sReliability"></select></label>
+            </div>
+            <label>ملخص<textarea id="sSummary" rows="3" placeholder="ما تعلمته من هذا المصدر..."></textarea></label>
+            <button class="btn btn-primary full" type="submit">حفظ المصدر</button>
+            <p class="message" id="srcMessage" aria-live="polite"></p>
+          </form>
+          <div class="panel">
+            <h2>المصادر</h2>
+            <div class="row"><input id="sSearch" placeholder="بحث..." style="flex:1"><select id="sFilterRel" style="width:auto"></select></div>
+            <label style="margin:10px 0"><input type="checkbox" id="sStaleOnly" style="width:auto"> القديمة فقط</label>
+            <div id="sourceList"></div>
+          </div>
+        </div>
+      </div>
+      <div class="view hidden" id="view-analyzer">
+        <div class="panel">
+          <div class="kicker">VIDEO ANALYZER</div>
+          <h2>محلل الفيديو</h2>
+          <p class="muted" style="font-size:12px">استخراج الإطارات تقني. فهم محتواها يأتي من وصفك اليدوي، لا تلقائياً.</p>
+          <label class="btn btn-secondary" for="anFile" style="cursor:pointer;width:fit-content">اختر فيديو من الجهاز</label>
+          <input id="anFile" type="file" accept="video/*" class="hidden">
+          <p class="message" id="anMeta"></p>
+          <div id="anFrames" class="row"></div>
+          <label>ملاحظاتك على المقطع<textarea id="anNotes" rows="3" placeholder="الحركة، الكاميرا، الإضاءة، التكوين، الإيقاع..."></textarea></label>
+          <div class="row">
+            <button class="btn btn-primary" id="anReportBtn" disabled>إنشاء التقرير</button>
+            <button class="btn btn-ghost" id="anSaveBtn" disabled>حفظ التحليل</button>
+          </div>
+          <div id="anReport" class="prompt-box hidden" style="margin-top:12px"></div>
+          <p class="message" id="anMessage" aria-live="polite"></p>
+        </div>
+      </div>
+      <div class="view hidden" id="view-montage">
+        <div class="panel">
+          <div class="kicker">MONTAGE ENGINE</div>
+          <h2>استوديو التجميع</h2>
+          <label class="btn btn-secondary" for="mgFile" style="cursor:pointer;width:fit-content">اختر مقاطع الفيديو</label>
+          <input id="mgFile" type="file" accept="video/mp4,video/webm,video/quicktime" multiple class="hidden">
+          <div id="mgList"></div>
+          <div id="mgWarn" class="message"></div>
+          <div class="row" style="margin-top:12px">
+            <button class="btn btn-primary" id="mgMergeBtn" disabled>تجميع وتنزيل MP4</button>
+            <button class="btn btn-ghost" id="mgPreviewBtn" disabled>معاينة المقطع الأول</button>
+          </div>
+          <p class="message" id="mgStatus" aria-live="polite"></p>
+          <video id="mgPreview" class="hidden" controls playsinline style="width:100%;margin-top:12px;border-radius:12px"></video>
+          <p class="muted" style="font-size:11px">التجميع داخل المتصفح عبر FFmpeg.wasm. ثقيل على هواتف Android مع الملفات الكبيرة. لا تغلق الصفحة أثناء المعالجة.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer>© <span id="year"></span> Migo AI Solution <span>•</span> Create beyond limits.</footer>
+  </main>
+
+  <div id="toast"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.1/dist/umd/index.js"></script>
+</body>
+</html>
